@@ -5,9 +5,14 @@ const PORT = 5000;
 
 const app = express();
 
+app.get('/users', (req, res) => {
+    res.json({
+        message: 'This is express server'
+    })
+})
+
 const server = app.listen(PORT, () => {
-    console.log(`Server is running now at ${PORT}`)
-    console.log(`http://localhost/${PORT}`)
+    console.log(`Express server is running now at ${PORT}`)
 })
 
 const io = new Server(server, {
@@ -16,20 +21,26 @@ const io = new Server(server, {
         methods: ['GET', 'POST']
     }
 })
+io.listen(5001, () => {
+    console.log("Socket server is running at 5001 port")
+});
 
 let peers = [];
 
 io.on('connection', (socket) => {
     socket.emit('connection', null);
-    console.log('New user connected')
     console.log(socket.id)
 
     socket.on('register-new-user', (data) => {
         peers.push({
             username: data.username,
-            socket: data.socketId
+            socketId: data.socketId
         });
-        console.log('Registered New User');
-        console.log(peers);
+        console.log("Active Users: ", peers);
+
+        io.sockets.emit('broadcast', {
+            event: 'ACTIVE_USERS',
+            activeUsers: peers
+        })
     })
 })

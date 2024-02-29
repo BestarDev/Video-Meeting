@@ -1,13 +1,12 @@
 import React from 'react'
-import {activeUsers} from '../assets/dummy/activeUsers'
 import ActiveUserListItem from './ActiveUserListItem'
 
-const ActiveUserList = () => {
+const ActiveUserList = ({activeUsers}) => {
   return (
     <div className='active_user_list_container'>
         {activeUsers.map(activeUser => (
             <ActiveUserListItem
-                key={activeUser.sockedId}
+                key={activeUser.socketId}
                 activeUser={activeUser}
             />
         ))}
