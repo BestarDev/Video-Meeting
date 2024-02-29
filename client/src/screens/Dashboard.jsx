@@ -3,14 +3,20 @@ import '../assets/styles/usersList.css'
 import logo from '../assets/images/logo.png'
 import ActiveUserList from '../components/ActiveUserList'
 import { useSelector } from 'react-redux'
+import { useEffect } from 'react'
+import { getLocalStream } from '../utils/webRTC/webRTCHandler'
+import DirectCall from '../components/DirectCall'
 
 const Dashboard = () => {
+  useEffect(() => {
+    getLocalStream();
+  }, [])
   const {activeUsers} = useSelector(state => state.user)
   return (
     <div className='dashboard_container bg-main-color'>
       <div className='dashboard_left_section'>
         <div className='dashboard_content_container'>
-          content
+          <DirectCall />
         </div>
         <div className='dashboard_rooms_container bg-secondary-color text-main-color'>
           rooms

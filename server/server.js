@@ -1,15 +1,9 @@
 import express from 'express'
 import { Server } from 'socket.io';
 
+let peers = [];
 const PORT = 5000;
-
 const app = express();
-
-app.get('/users', (req, res) => {
-    res.json({
-        message: 'This is express server'
-    })
-})
 
 const server = app.listen(PORT, () => {
     console.log(`Express server is running now at ${PORT}`)
@@ -21,11 +15,6 @@ const io = new Server(server, {
         methods: ['GET', 'POST']
     }
 })
-io.listen(5001, () => {
-    console.log("Socket server is running at 5001 port")
-});
-
-let peers = [];
 
 io.on('connection', (socket) => {
     socket.emit('connection', null);
@@ -38,6 +27,15 @@ io.on('connection', (socket) => {
         });
         console.log("Active Users: ", peers);
 
+        io.sockets.emit('broadcast', {
+            event: 'ACTIVE_USERS',
+            activeUsers: peers
+        })
+    })
+
+    socket.on('disconnect', () => {
+        console.log("User disconnected")
+        peers = peers.filter(peer => peer.socketId !== socket.id)
         io.sockets.emit('broadcast', {
             event: 'ACTIVE_USERS',
             activeUsers: peers
